@@ -1,12 +1,3 @@
-function createNode(element) {
-    return document.createElement(element);
-}
-
-function append(parent, el) {
-  return parent.appendChild(el);
-}
-
-const ul = document.getElementById('items');
 const url = 'http://localhost:3000/api/products';
 
 fetch(url)
