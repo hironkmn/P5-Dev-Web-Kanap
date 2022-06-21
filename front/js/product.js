@@ -27,19 +27,45 @@ fetch(url+id)
   console.log(error);
 });
 
-const button = document.getElementById('addToCart')
-button.addEventListener("click", function() {
+function saveCart(cart) {
+  sessionStorage.setItem("articles", JSON.stringify(cart))
+}
+
+function getCart() {
+  let cart = sessionStorage.getItem("articles")
+  if (cart == null) {
+    return []
+  } else {
+      return JSON.parse(cart)
+  }
+}
+
+function getArticle() {
+  let objJson = {}
   let colors = document.getElementById('colors')
   let color = colors.options[colors.selectedIndex].value
   let number = document.getElementById('quantity').value
-  if (color != '' && number != 0) {
-    button.textContent = "Ajouté(s) au panier !!"
+  objJson.id = id
+  objJson.color = color
+  objJson.count = number
+  console.log(number)
+  return objJson
+  
+}
+
+const button = document.getElementById('addToCart')
+button.addEventListener("click", function() {
+  let article = getArticle()
+  let cart = getCart()
+  let foundArticle = cart.find(p => p.id == article.id && p.color == article.color)
+  if (foundArticle != undefined) {
+    alert('Votre article a été ajouté au panier !')
+    foundArticle.count++
+  } else {
+    if (article.color != '' && article.number != 0) {
+      alert('Votre article a été ajouté au panier !')
+      cart.push(article)
+    }
   }
-  let objJson = {
-      id : id,
-      color : color,
-      count : number
-  }
-  let objLinea = JSON.stringify(objJson)
-  sessionStorage.setItem("obj",objLinea)
+  saveCart(cart)
 })
