@@ -29,7 +29,17 @@ fetch(url+id)
 
 const button = document.getElementById('addToCart')
 button.addEventListener("click", function() {
-  let img = document.getElementById('img')
-  let title = document.getElementById('title')
-  let price = document.getElementById('price')
+  let colors = document.getElementById('colors')
+  let color = colors.options[colors.selectedIndex].value
+  let number = document.getElementById('quantity').value
+  if (color != '' && number != 0) {
+    button.textContent = "Ajouté(s) au panier !!"
+  }
+  let objJson = {
+      id : id,
+      color : color,
+      count : number
+  }
+  let objLinea = JSON.stringify(objJson)
+  sessionStorage.setItem("obj",objLinea)
 })
