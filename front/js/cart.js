@@ -68,10 +68,19 @@ for (let i = 0; i < objJson.length; i++) {
   })
   .catch(function(error) {
     console.log(error);
-  });
+  })
 }
 
-
-$('#deleteItem').on('click','.remove-item',function(){
-  $(this).closest('article').remove();// remove the closest li item row
-})
+const htmlCollection = document.getElementsByClassName('deleteItem')
+let deleteButtons = [].slice.call(htmlCollection)
+console.log(deleteButtons)
+console.log('Longueur du tableau deleteButton:', deleteButtons.length)
+for (let j = 0; j < deleteButtons.length; j++) {
+  
+  deleteButtons[j].addEventListener('click', function() {
+    let toDelete = deleteButtons[j].closest('article.cart__items')
+    console.log(toDelete)
+    toDelete.remove()
+  });
+  
+}

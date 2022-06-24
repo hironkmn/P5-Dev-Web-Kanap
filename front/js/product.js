@@ -48,9 +48,7 @@ function getArticle() {
   objJson.id = id
   objJson.color = color
   objJson.count = number
-  console.log(number)
-  return objJson
-  
+  return objJson  
 }
 
 const button = document.getElementById('addToCart')
