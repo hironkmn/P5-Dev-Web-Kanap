@@ -13,57 +13,34 @@ document.addEventListener('DOMContentLoaded', () => {
       .then((resp) => resp.json())
       .then(function (data) {
         let section = document.getElementById('cart__items')
-        let article = document.createElement('article')
-        article.setAttribute('class', 'cart__item')
-        article.dataset.id = objJson[i].id
-        article.dataset.color = objJson[i].color
-        let divImg = document.createElement('div')
-        divImg.setAttribute('class', 'cart__item__img')
-        let img = document.createElement('img')
-        img.src = data['imageUrl']
-        img.alt = data['altTxt']
-        divImg.appendChild(img)
-        article.appendChild(divImg)
-        section.appendChild(article)
-        let divContent = document.createElement('div')
-        let divDescription = document.createElement('div')
-        divContent.setAttribute('class', 'cart__item__content')
-        divDescription.setAttribute('class', 'cart__item__content__description')
-        divContent.appendChild(divDescription)
-        let h2 = document.createElement('h2')
-        let pColor = document.createElement('p')
-        let pPrice = document.createElement('p')
-        h2.textContent = data['name']
-        pColor.textContent = objJson[i].color
-        pPrice.textContent = data['price'] + '€'
-        divDescription.appendChild(h2)
-        divDescription.appendChild(pColor)
-        divDescription.appendChild(pPrice)
-        article.appendChild(divContent)
-        let divSettings = document.createElement('div')
-        divSettings.setAttribute('class', 'cart__item__content__settings')
-        let divSettQty = document.createElement('div')
-        divSettQty.setAttribute('class', 'cart__item__content__settings__quantity')
-        divSettings.appendChild(divSettQty)
-        let pQty = document.createElement('p')
-        pQty.textContent = 'Qté :'
-        divSettQty.appendChild(pQty)
-        let input = document.createElement('input')
-        input.setAttribute('class', 'itemQuantity')
-        input.type = 'number'
-        input.name = 'itemQuantity'
-        input.value = objJson[i].count
-        input.min = 1
-        input.max = 100
-        divSettQty.appendChild(input)
-        let divSettDel = document.createElement('div')
-        divSettDel.setAttribute('class', 'cart__item__content__settings__delete')
-        divSettings.appendChild(divSettDel)
-        let pDel = document.createElement('p')
-        pDel.setAttribute('class', 'deleteItem')
-        pDel.textContent = 'Supprimer'
-        divSettDel.appendChild(pDel)
-        article.appendChild(divSettings)
+        let article = createArticle('cart__item', objJson[i].id, objJson[i].color)
+        let divImg = createDiv('cart__item__img')
+        let img = createImg(data['imageUrl'], data['altTxt'])
+        addChild(divImg, img)
+        addChild(article, divImg)
+        addChild(section, article)
+        let divContent = createDiv('cart__item__content')
+        let divDescription = createDiv('cart__item__content__description')
+        addChild(divContent, divDescription)
+        let h2 = createH2(data['name'])
+        let pColor = createP('', objJson[i].color)
+        let pPrice = createP('', data['price'] + '€')
+        addChild(divDescription, h2)
+        addChild(divDescription, pColor)
+        addChild(divDescription, pPrice)
+        addChild(article, divContent)
+        let divSettings = createDiv('cart__item__content__settings')
+        let divSettQty = createDiv('cart__item__content__settings__quantity')
+        addChild(divSettings, divSettQty)
+        let pQty = createP('', 'Qté :')
+        addChild(divSettQty, pQty)
+        let input = createInput('itemQuantity', objJson[i].count)
+        addChild(divSettQty, input)
+        let divSettDel = createDiv('cart__item__content__settings__delete')
+        addChild(divSettings, divSettDel)
+        let pDel = createP('deleteItem', 'Supprimer')
+        addChild(divSettDel, pDel)
+        addChild(article, divSettings)
         let totalQty = document.getElementById('totalQuantity')
         let totalPrice = document.getElementById('totalPrice')
         Qty = Qty + parseInt(objJson[i].count)
@@ -72,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalPrice.textContent = totalPriceAdd
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error)
       })
     promises.push(requete)
   }
@@ -80,18 +57,77 @@ document.addEventListener('DOMContentLoaded', () => {
   Promise.all(promises)
     .then(function () {
       const htmlCollection = document.getElementsByClassName('deleteItem')
-      console.log(htmlCollection)
 
       for (let j = 0; j < htmlCollection.length; j++) {
         htmlCollection[j].addEventListener('click', function (event) {
           let toDelete = event.target.closest('article.cart__item')
-          console.log(toDelete)
           toDelete.remove()
-        });
+        })
 
+      }
+    })
+    
+    .then(function () {
+      const inputs = document.getElementsByClassName('itemQuantity')
+
+      for (let k = 0; k < inputs.length; k++) {
+        inputs[k].addEventListener('change', function() {
+          
+        })
+        
       }
     })
 
 
 
 })
+
+function addChild(parent, child) {
+  parent.appendChild(child)
+}
+
+function createArticle(classname, data1, data2) {
+  let article = document.createElement('article')
+  article.setAttribute('class', classname)
+  article.dataset.id = data1
+  article.dataset.color = data2
+  return article
+}
+
+function createDiv(classname) {
+  let div = document.createElement('div')
+  div.setAttribute('class', classname)
+  return div
+}
+
+function createH2(classname, text) {
+  let h2 = document.createElement('h2')
+  h2.setAttribute('class', classname)
+  h2.textContent = text
+  return h2
+}
+
+function createP(classname, text) {
+  let p = document.createElement('p')
+  p.setAttribute('class', classname)
+  p.textContent = text
+  return p
+}
+
+function createImg(source, alt) {
+  let img = document.createElement('img')
+  img.src = source
+  img.alt = alt
+  return img
+}
+
+function createInput(classname, value) {
+  let input = document.createElement('input')
+  input.setAttribute('class', classname)
+  input.name = classname
+  input.type = 'number'
+  input.value = value
+  input.min = 1
+  input.max = 100
+  return input
+}
