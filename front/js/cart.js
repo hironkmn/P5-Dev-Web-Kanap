@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let divContent = createDiv('cart__item__content')
         let divDescription = createDiv('cart__item__content__description')
         addChild(divContent, divDescription)
-        let h2 = createH2(data['name'])
+        let h2 = createH2('', data['name'])
         let pColor = createP('', objJson[i].color)
         let pPrice = createP('', data['price'] + '€')
         addChild(divDescription, h2)
@@ -61,12 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let j = 0; j < htmlCollection.length; j++) {
         htmlCollection[j].addEventListener('click', function (event) {
           let toDelete = event.target.closest('article.cart__item')
+          let settings = event.target.closest('div.cart__item__content__settings')
+          let price = toDelete.querySelectorAll('p')
+          let number = settings.querySelector('.itemQuantity')
+          deleteNbItems(number.value)
+          deletePrice(number.value,parseInt(price[1].textContent.slice(0,-1)))
           toDelete.remove()
         })
 
       }
     })
-    
+
     .then(function () {
       const inputs = document.getElementsByClassName('itemQuantity')
 
@@ -130,4 +135,20 @@ function createInput(classname, value) {
   input.min = 1
   input.max = 100
   return input
+}
+
+/*function removeFromStorage(data1, data2) {
+
+}*/
+
+function deleteNbItems(number) {
+  let totalItems = document.getElementById('totalQuantity')
+  let totalItemsNb = parseInt(totalItems.textContent) - number
+  totalItems.textContent = totalItemsNb
+}
+
+function deletePrice(number, price) {
+  let totalPrice = document.getElementById('totalPrice')
+  let finalPrice = parseInt(totalPrice.textContent) - (number * price)
+  totalPrice.textContent = finalPrice
 }
