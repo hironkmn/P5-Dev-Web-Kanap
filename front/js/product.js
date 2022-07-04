@@ -28,11 +28,11 @@ fetch(url+id)
 });
 
 function saveCart(cart) {
-  sessionStorage.setItem("articles", JSON.stringify(cart))
+  localStorage.setItem("articles", JSON.stringify(cart))
 }
 
 function getCart() {
-  let cart = sessionStorage.getItem("articles")
+  let cart = localStorage.getItem("articles")
   if (cart == null) {
     return []
   } else {

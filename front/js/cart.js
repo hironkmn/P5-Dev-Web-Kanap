@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let promises = []
 
 
-  let objJson = JSON.parse(sessionStorage.getItem('articles'))
+  let objJson = JSON.parse(localStorage.getItem('articles'))
   for (let i = 0; i < objJson.length; i++) {
     let requete = fetch(url + objJson[i].id)
       .then((resp) => resp.json())
@@ -64,8 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
           let settings = event.target.closest('div.cart__item__content__settings')
           let price = toDelete.querySelectorAll('p')
           let number = settings.querySelector('.itemQuantity')
+          let dataId = toDelete.dataset.id
+          let dataColor = toDelete.dataset.color
+          removeFromStorage(dataId, dataColor)
           deleteNbItems(number.value)
-          deletePrice(number.value,parseInt(price[1].textContent.slice(0,-1)))
+          deletePrice(number.value, parseInt(price[1].textContent.slice(0, -1)))
+          removeFromStorage('')
           toDelete.remove()
         })
 
@@ -73,13 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     .then(function () {
-      const inputs = document.getElementsByClassName('itemQuantity')
-
+    const inputs = document.getElementsByClassName('itemQuantity')
       for (let k = 0; k < inputs.length; k++) {
-        inputs[k].addEventListener('change', function() {
-          
+        inputs[k].addEventListener('change', function (event) {
+          event.preventDefault()
+          let valueToChange = event.target.value
+          let article = event.target.closest('article.cart__item')
+          let elements = article.querySelectorAll('p')
+          let price = parseInt(elements[1].textContent.slice(0, -1))
+          let dataId = article.dataset.id
+          let dataColor = article.dataset.color
+          changeTotalPrice(dataId, dataColor, valueToChange, price)
+          changeTotalQty()
+
         })
-        
+
       }
     })
 
@@ -137,9 +149,15 @@ function createInput(classname, value) {
   return input
 }
 
-/*function removeFromStorage(data1, data2) {
-
-}*/
+function removeFromStorage(data1, data2) {
+  let objJson = JSON.parse(localStorage.getItem('articles'))
+  for (let i = 0; i < objJson.length; i++) {
+    if (objJson[i].id == data1 && objJson[i].color == data2) {
+      objJson.pop(i)
+    }
+    localStorage.setItem("articles", JSON.stringify(objJson))
+  }
+}
 
 function deleteNbItems(number) {
   let totalItems = document.getElementById('totalQuantity')
@@ -151,4 +169,38 @@ function deletePrice(number, price) {
   let totalPrice = document.getElementById('totalPrice')
   let finalPrice = parseInt(totalPrice.textContent) - (number * price)
   totalPrice.textContent = finalPrice
+}
+
+function changeValue(id, color, value) {
+  let objJson = JSON.parse(localStorage.getItem('articles'))
+  for (let i = 0; i < objJson.length; i++) {
+    if (objJson[i].id == id && objJson[i].color == color) {
+      objJson[i].count = value
+    }
+  }
+  localStorage.setItem("articles", JSON.stringify(objJson))
+}
+
+function changeTotalPrice(id, color, qty, price) {
+  let objJson = JSON.parse (localStorage.getItem('articles'))
+  let totalPrice = document.getElementById('totalPrice')
+  for (let i = 0; i < objJson.length; i++) {
+    if (objJson[i].id == id && objJson[i].color == color && objJson[i].count < qty) {
+      totalPrice.textContent = parseInt(totalPrice.textContent) + price
+      changeValue(id,color,qty)
+    } else if (objJson[i].id == id && objJson[i].color == color && objJson[i].count > qty) {
+      totalPrice.textContent = parseInt(totalPrice.textContent) - price
+      changeValue(id,color,qty)
+    }
+  }
+}
+
+function changeTotalQty() {
+  let objJson = JSON.parse (localStorage.getItem('articles'))
+  let totalQty = document.getElementById('totalQuantity')
+  let totalQtyInt = 0
+  for (let i = 0; i < objJson.length; i++) {
+    totalQtyInt = totalQtyInt + parseInt(objJson[i].count, 10)
+  }
+  totalQty.textContent = totalQtyInt
 }
