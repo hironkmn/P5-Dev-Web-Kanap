@@ -204,3 +204,78 @@ function changeTotalQty() {
   }
   totalQty.textContent = totalQtyInt
 }
+
+let submitButton = document.getElementById('order')
+submitButton.addEventListener('click', function(event) {
+  event.preventDefault()
+  let firstname = document.getElementById('firstName').value
+  let lastname = document.getElementById('lastName').value
+  let city = document.getElementById('city').value
+  let email = document.getElementById('email').value
+  let address = document.getElementById('address').value
+  let articles = document.querySelectorAll('article')
+  regexUsername(firstname, lastname, city)
+  regexAddress(address)
+  regexEmail(email)
+  let user = {
+    firstName: firstname,
+    lastName: lastname,
+    address: address,
+    city : city,
+    email: email
+  }
+  let productsId = getDataId(articles)
+  let orderInfos = {contact: user, products: productsId}
+  fetch('http://localhost:3000/api/products/order', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(orderInfos)
+  })
+  .then(response => response.json())
+  .then(data => {
+    localStorage.setItem('orderId', data.orderId)
+    document.location.href = 'confirmation.html?id=' + data.orderId
+    localStorage.removeItem('orderId')
+    localStorage.removeItem('articles')
+  })
+})
+
+function regexUsername(firstname, lastname, city){
+  let masque = /[A-Za-z]/
+  let testFirstname = masque.test(firstname)
+  let testLastname = masque.test(lastname)
+  let testCity = masque.test(city)
+  if (testFirstname == false && testLastname == true && testCity == true) {
+    alert("Le prénom est mal écrit.")
+  } else if (testFirstname == true && testLastname == false && testCity == true) {
+    alert("Le nom est mal écrit.")
+  } else if (testFirstname == true && testLastname == true && testCity == false) {
+    alert("Le nom de la ville est mal écrit.")
+  }
+}
+
+function regexEmail(email) {
+  let masque = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+  let testEmail = masque.test(email)
+  if (testEmail == false) {
+    alert("L'adresse mail est incorrecte.")
+  }
+}
+
+function regexAddress(address) {
+  let masque = /^\d+\s[A-z]+\s[A-z]+/
+  let testAddress = masque.test(address)
+  if (testAddress == false) {
+    alert("L'adresse est incorrecte.")
+  }
+}
+
+function getDataId(array) {
+  let id = []
+  for (let i = 0; i < array.length; i++) {
+    id.push(array[i].dataset.id)
+  }
+  return id
+}
