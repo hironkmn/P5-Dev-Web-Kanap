@@ -1,11 +1,11 @@
-const url = 'http://localhost:3000/api/products';
+const url = 'http://localhost:3000/api/products'
 
-fetch(url)
+fetch(url) // requête à l'API pour récupérer chaque produit
 .then((resp) => resp.json())
 .then(function(data) {
   console.log(data[0])
   let section = document.getElementById('items')
-  let productUrl = "./product.html?id="
+  let productUrl = "./product.html?id=" 
   for (let i = 0; i < data.length; i++) {
     let a = document.createElement('a')
     let article = document.createElement('article')
@@ -14,7 +14,7 @@ fetch(url)
     let p = document.createElement('p')
     h3.setAttribute('class','productName')
     p.setAttribute('class','productDescription')
-    a.href = productUrl + data[i]['_id']
+    a.href = productUrl + data[i]['_id'] // création du lien qui renverra vers la page du produit
     img.src = data[i]['imageUrl']
     img.alt = data[i]['altTxt']
     h3.textContent = data[i]['name']
@@ -25,9 +25,8 @@ fetch(url)
     article.appendChild(h3)
     article.appendChild(p)
   }
-  let article = document.createElement('article')
 
 })
 .catch(function(error) {
-  console.log(error);
+  console.log(error)
 });

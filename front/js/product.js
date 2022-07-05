@@ -2,9 +2,9 @@ let url = 'http://localhost:3000/api/products/'
 
 let pageUrl = window.location.href
 let searchParams = new URLSearchParams(new URL(pageUrl).search)
-let id = searchParams.get('id');
+let id = searchParams.get('id') // Récupération de l'id de l'article
 
-fetch(url+id)
+fetch(url+id) // Requête à l'API pour récupérer les informations sur le produit
 .then((resp) => resp.json())
 .then(function (data){
     let select = document.getElementById('colors')
@@ -28,10 +28,12 @@ fetch(url+id)
 });
 
 function saveCart(cart) {
+  // Fonction qui sauvegarde le panier dans le localStorage
   localStorage.setItem("articles", JSON.stringify(cart))
 }
 
 function getCart() {
+  // Fonction qui permet de récupérer le panier dans le localStorage
   let cart = localStorage.getItem("articles")
   if (cart == null) {
     return []
@@ -41,6 +43,7 @@ function getCart() {
 }
 
 function getArticle() {
+  // Fonction qui construit un objet contenant les informations du produit
   let objJson = {}
   let colors = document.getElementById('colors')
   let color = colors.options[colors.selectedIndex].value
@@ -53,13 +56,14 @@ function getArticle() {
 
 const button = document.getElementById('addToCart')
 button.addEventListener("click", function() {
+  // Fonction qui ajoute le produit, sa quantité et sa couleur dans le panier
   let article = getArticle()
   let cart = getCart()
-  let foundArticle = cart.find(p => p.id == article.id && p.color == article.color)
-  if (foundArticle != undefined) {
+  let foundArticle = cart.find(p => p.id == article.id && p.color == article.color) // Vérifier que le produit n'est pas déjà dans le panier
+  if (foundArticle != undefined) { // S'il y est, incrémenter la quantité du produit
     alert('Votre article a été ajouté au panier !')
     foundArticle.count++
-  } else {
+  } else { // Sinon rajouter le produit au tableau de produits
     if (article.color != '' && article.number != 0) {
       alert('Votre article a été ajouté au panier !')
       cart.push(article)

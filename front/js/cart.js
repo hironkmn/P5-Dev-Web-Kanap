@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       for (let j = 0; j < htmlCollection.length; j++) {
         htmlCollection[j].addEventListener('click', function (event) {
+          // Fonction qui permet de supprimer le produit via le bouton supprimer
           let toDelete = event.target.closest('article.cart__item')
           let settings = event.target.closest('div.cart__item__content__settings')
           let price = toDelete.querySelectorAll('p')
@@ -72,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
           removeFromStorage('')
           toDelete.remove()
         })
-
       }
     })
 
     .then(function () {
-    const inputs = document.getElementsByClassName('itemQuantity')
+      const inputs = document.getElementsByClassName('itemQuantity')
       for (let k = 0; k < inputs.length; k++) {
+        // Fonction qui permet de modifier les quantités via l'input de chaque produit
         inputs[k].addEventListener('change', function (event) {
           event.preventDefault()
           let valueToChange = event.target.value
@@ -91,12 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
           changeTotalQty()
 
         })
-
       }
     })
-
-
-
 })
 
 function addChild(parent, child) {
@@ -150,6 +147,7 @@ function createInput(classname, value) {
 }
 
 function removeFromStorage(data1, data2) {
+  // Fonction qui supprime le produit correspondant du localStorage
   let objJson = JSON.parse(localStorage.getItem('articles'))
   for (let i = 0; i < objJson.length; i++) {
     if (objJson[i].id == data1 && objJson[i].color == data2) {
@@ -160,18 +158,21 @@ function removeFromStorage(data1, data2) {
 }
 
 function deleteNbItems(number) {
+  // Fonction qui supprime la quantité du produit supprimé dans le localStorage
   let totalItems = document.getElementById('totalQuantity')
   let totalItemsNb = parseInt(totalItems.textContent) - number
   totalItems.textContent = totalItemsNb
 }
 
 function deletePrice(number, price) {
+  // Fonction qui supprime le prix du produit supprimé dans le localStorage
   let totalPrice = document.getElementById('totalPrice')
   let finalPrice = parseInt(totalPrice.textContent) - (number * price)
   totalPrice.textContent = finalPrice
 }
 
 function changeValue(id, color, value) {
+  // Fonction qui permet de changer la quantité du produit dans le localStorage
   let objJson = JSON.parse(localStorage.getItem('articles'))
   for (let i = 0; i < objJson.length; i++) {
     if (objJson[i].id == id && objJson[i].color == color) {
@@ -182,21 +183,23 @@ function changeValue(id, color, value) {
 }
 
 function changeTotalPrice(id, color, qty, price) {
-  let objJson = JSON.parse (localStorage.getItem('articles'))
+  // Fonction qui change le prix total de la commande
+  let objJson = JSON.parse(localStorage.getItem('articles'))
   let totalPrice = document.getElementById('totalPrice')
   for (let i = 0; i < objJson.length; i++) {
     if (objJson[i].id == id && objJson[i].color == color && objJson[i].count < qty) {
       totalPrice.textContent = parseInt(totalPrice.textContent) + price
-      changeValue(id,color,qty)
+      changeValue(id, color, qty)
     } else if (objJson[i].id == id && objJson[i].color == color && objJson[i].count > qty) {
       totalPrice.textContent = parseInt(totalPrice.textContent) - price
-      changeValue(id,color,qty)
+      changeValue(id, color, qty)
     }
   }
 }
 
 function changeTotalQty() {
-  let objJson = JSON.parse (localStorage.getItem('articles'))
+  // Fonction qui change la quantité totale de la commande
+  let objJson = JSON.parse(localStorage.getItem('articles'))
   let totalQty = document.getElementById('totalQuantity')
   let totalQtyInt = 0
   for (let i = 0; i < objJson.length; i++) {
@@ -206,7 +209,8 @@ function changeTotalQty() {
 }
 
 let submitButton = document.getElementById('order')
-submitButton.addEventListener('click', function(event) {
+submitButton.addEventListener('click', function (event) {
+  // Fonction qui permet d'envoyer le formulaire afin de valider la commande
   event.preventDefault()
   let firstname = document.getElementById('firstName').value
   let lastname = document.getElementById('lastName').value
@@ -217,15 +221,9 @@ submitButton.addEventListener('click', function(event) {
   regexUsername(firstname, lastname, city)
   regexAddress(address)
   regexEmail(email)
-  let user = {
-    firstName: firstname,
-    lastName: lastname,
-    address: address,
-    city : city,
-    email: email
-  }
+  let user = createUserObject(firstname, lastname, address, city, email)
   let productsId = getDataId(articles)
-  let orderInfos = {contact: user, products: productsId}
+  let orderInfos = { contact: user, products: productsId }
   fetch('http://localhost:3000/api/products/order', {
     method: 'POST',
     headers: {
@@ -233,26 +231,27 @@ submitButton.addEventListener('click', function(event) {
     },
     body: JSON.stringify(orderInfos)
   })
-  .then(response => response.json())
-  .then(data => {
-    localStorage.setItem('orderId', data.orderId)
-    document.location.href = 'confirmation.html?id=' + data.orderId
-    localStorage.removeItem('orderId')
-    localStorage.removeItem('articles')
-  })
+    .then(response => response.json())
+    .then(data => {
+      localStorage.setItem('orderId', data.orderId)
+      document.location.href = 'confirmation.html?id=' + data.orderId
+      localStorage.removeItem('orderId')
+      localStorage.removeItem('articles')
+    })
 })
 
-function regexUsername(firstname, lastname, city){
+function regexUsername(firstname, lastname, city) {
+  // Fonctio
   let masque = /[A-Za-z]/
   let testFirstname = masque.test(firstname)
   let testLastname = masque.test(lastname)
   let testCity = masque.test(city)
   if (testFirstname == false && testLastname == true && testCity == true) {
-    alert("Le prénom est mal écrit.")
+    alert("Le prénom est incorrect")
   } else if (testFirstname == true && testLastname == false && testCity == true) {
-    alert("Le nom est mal écrit.")
+    alert("Le nom est incorrect.")
   } else if (testFirstname == true && testLastname == true && testCity == false) {
-    alert("Le nom de la ville est mal écrit.")
+    alert("Le nom de la ville est incorrect.")
   }
 }
 
@@ -278,4 +277,15 @@ function getDataId(array) {
     id.push(array[i].dataset.id)
   }
   return id
+}
+
+function createUserObject(firstname, lastname, address, city, email) {
+  let user = {
+    firstName: firstname,
+    lastName: lastname,
+    address: address,
+    city: city,
+    email: email
+  }
+  return user
 }
