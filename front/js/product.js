@@ -64,7 +64,7 @@ button.addEventListener("click", function() {
     alert('Votre article a été ajouté au panier !')
     foundArticle.count++
   } else { // Sinon rajouter le produit au tableau de produits
-    if (article.color != '' && article.number != 0) {
+    if (article.color != '' && article.count != 0) {
       alert('Votre article a été ajouté au panier !')
       cart.push(article)
     }

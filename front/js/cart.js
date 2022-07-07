@@ -221,23 +221,25 @@ submitButton.addEventListener('click', function (event) {
   regexUsername(firstname, lastname, city)
   regexAddress(address)
   regexEmail(email)
-  let user = createUserObject(firstname, lastname, address, city, email)
-  let productsId = getDataId(articles)
-  let orderInfos = { contact: user, products: productsId }
-  fetch('http://localhost:3000/api/products/order', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8'
-    },
-    body: JSON.stringify(orderInfos)
-  })
-    .then(response => response.json())
-    .then(data => {
-      localStorage.setItem('orderId', data.orderId)
-      document.location.href = 'confirmation.html?id=' + data.orderId
-      localStorage.removeItem('orderId')
-      localStorage.removeItem('articles')
+  if (regexUsername(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true) {
+    let user = createUserObject(firstname, lastname, address, city, email)
+    let productsId = getDataId(articles)
+    let orderInfos = { contact: user, products: productsId }
+    fetch('http://localhost:3000/api/products/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+      },
+      body: JSON.stringify(orderInfos)
     })
+      .then(response => response.json())
+      .then(data => {
+        localStorage.setItem('orderId', data.orderId)
+        document.location.href = 'confirmation.html?id=' + data.orderId
+        localStorage.removeItem('orderId')
+        localStorage.removeItem('articles')
+      })
+  }
 })
 
 function regexUsername(firstname, lastname, city) {
@@ -248,10 +250,15 @@ function regexUsername(firstname, lastname, city) {
   let testCity = masque.test(city)
   if (testFirstname == false && testLastname == true && testCity == true) {
     alert("Le prénom est incorrect")
+    return false
   } else if (testFirstname == true && testLastname == false && testCity == true) {
     alert("Le nom est incorrect.")
+    return false
   } else if (testFirstname == true && testLastname == true && testCity == false) {
     alert("Le nom de la ville est incorrect.")
+    return false
+  } else {
+    return true
   }
 }
 
@@ -260,6 +267,9 @@ function regexEmail(email) {
   let testEmail = masque.test(email)
   if (testEmail == false) {
     alert("L'adresse mail est incorrecte.")
+    return false
+  } else {
+    return true
   }
 }
 
@@ -268,6 +278,9 @@ function regexAddress(address) {
   let testAddress = masque.test(address)
   if (testAddress == false) {
     alert("L'adresse est incorrecte.")
+    return false
+  } else {
+    return true
   }
 }
 
