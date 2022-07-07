@@ -243,7 +243,7 @@ submitButton.addEventListener('click', function (event) {
 })
 
 function regexUsername(firstname, lastname, city) {
-  // Fonctio
+  // Fonction qui vérifie la conformité du prénom, du nom et du nom de la ville
   let masque = /[A-Za-z]/
   let testFirstname = masque.test(firstname)
   let testLastname = masque.test(lastname)
@@ -263,6 +263,7 @@ function regexUsername(firstname, lastname, city) {
 }
 
 function regexEmail(email) {
+  // Fonction qui vérifie la conformité de l'adresse e-mail
   let masque = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
   let testEmail = masque.test(email)
   if (testEmail == false) {
@@ -274,6 +275,7 @@ function regexEmail(email) {
 }
 
 function regexAddress(address) {
+  // Fonction qui vérifie la conformité de l'adresse postale
   let masque = /^\d+\s[A-z]+\s[A-z]+/
   let testAddress = masque.test(address)
   if (testAddress == false) {
@@ -285,6 +287,7 @@ function regexAddress(address) {
 }
 
 function getDataId(array) {
+  // Fonction qui récupére l'id des articles pour les mettre dans un tableau
   let id = []
   for (let i = 0; i < array.length; i++) {
     id.push(array[i].dataset.id)
@@ -293,6 +296,7 @@ function getDataId(array) {
 }
 
 function createUserObject(firstname, lastname, address, city, email) {
+  // Fonction qui crée un objet user
   let user = {
     firstName: firstname,
     lastName: lastname,
