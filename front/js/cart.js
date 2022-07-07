@@ -122,6 +122,7 @@ function createH2(classname, text) {
 }
 
 function createP(classname, text) {
+  // Fonction qui crée un paragraphe
   let p = document.createElement('p')
   p.setAttribute('class', classname)
   p.textContent = text
@@ -287,7 +288,7 @@ function regexAddress(address) {
 }
 
 function getDataId(array) {
-  // Fonction qui récupére l'id des articles pour les mettre dans un tableau
+  // Fonction qui récupére le data-id des articles pour les mettre dans un tableau
   let id = []
   for (let i = 0; i < array.length; i++) {
     id.push(array[i].dataset.id)
