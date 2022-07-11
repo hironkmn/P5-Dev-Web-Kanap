@@ -219,10 +219,10 @@ submitButton.addEventListener('click', function (event) {
   let email = document.getElementById('email').value
   let address = document.getElementById('address').value
   let articles = document.querySelectorAll('article')
-  regexUsername(firstname, lastname, city)
+  regexName(firstname, lastname, city)
   regexAddress(address)
   regexEmail(email)
-  if (regexUsername(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true) {
+  if (regexName(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true) {
     let user = createUserObject(firstname, lastname, address, city, email)
     let productsId = getDataId(articles)
     let orderInfos = { contact: user, products: productsId }
@@ -235,15 +235,13 @@ submitButton.addEventListener('click', function (event) {
     })
       .then(response => response.json())
       .then(data => {
-        localStorage.setItem('orderId', data.orderId)
         document.location.href = 'confirmation.html?id=' + data.orderId
-        localStorage.removeItem('orderId')
         localStorage.removeItem('articles')
       })
   }
 })
 
-function regexUsername(firstname, lastname, city) {
+function regexName(firstname, lastname, city) {
   // Fonction qui vérifie la conformité du prénom, du nom et du nom de la ville
   let masque = /[A-Za-z]/
   let testFirstname = masque.test(firstname)
@@ -289,21 +287,16 @@ function regexAddress(address) {
 
 function getDataId(array) {
   // Fonction qui récupére le data-id des articles pour les mettre dans un tableau
-  let id = []
-  for (let i = 0; i < array.length; i++) {
-    id.push(array[i].dataset.id)
-  }
-  return id
+  return Array.from(array).map(e => e.dataset.id)
 }
 
 function createUserObject(firstname, lastname, address, city, email) {
   // Fonction qui crée un objet user
-  let user = {
-    firstName: firstname,
-    lastName: lastname,
-    address: address,
-    city: city,
-    email: email
+  return  {
+    firstname,
+    lastname,
+    address,
+    city,
+    email
   }
-  return user
 }
