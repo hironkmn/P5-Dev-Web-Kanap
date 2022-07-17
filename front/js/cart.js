@@ -219,10 +219,7 @@ submitButton.addEventListener('click', function (event) {
   let email = document.getElementById('email').value
   let address = document.getElementById('address').value
   let articles = document.querySelectorAll('article')
-  regexName(firstname, lastname, city)
-  regexAddress(address)
-  regexEmail(email)
-  if (regexName(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true) {
+  if (regexName(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true && emptyCart == true ) {
     let user = createUserObject(firstname, lastname, address, city, email)
     let productsId = getDataId(articles)
     let orderInfos = { contact: user, products: productsId }
@@ -238,6 +235,8 @@ submitButton.addEventListener('click', function (event) {
         document.location.href = 'confirmation.html?id=' + data.orderId
         localStorage.removeItem('articles')
       })
+  } else {
+    emptyCart()
   }
 })
 
@@ -275,10 +274,20 @@ function regexEmail(email) {
 
 function regexAddress(address) {
   // Fonction qui vérifie la conformité de l'adresse postale
-  let masque = /^\d+\s[A-z]+\s[A-z]+/
+  let masque = /([0-9]*) ?([a-zA-Z,\. ]*)/
   let testAddress = masque.test(address)
   if (testAddress == false) {
     alert("L'adresse est incorrecte.")
+    return false
+  } else {
+    return true
+  }
+}
+
+function emptyCart() {
+  let articles = document.querySelectorAll('article')
+  if(articles.length == 0){
+    alert("Le panier est vide !")
     return false
   } else {
     return true
@@ -293,10 +302,10 @@ function getDataId(array) {
 function createUserObject(firstname, lastname, address, city, email) {
   // Fonction qui crée un objet user
   return  {
-    firstname,
-    lastname,
-    address,
-    city,
-    email
+    firstName: firstname,
+    lastName: lastname,
+    address: address,
+    city: city,
+    email: email
   }
 }
