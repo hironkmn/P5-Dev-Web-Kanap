@@ -219,7 +219,7 @@ submitButton.addEventListener('click', function (event) {
   let email = document.getElementById('email').value
   let address = document.getElementById('address').value
   let articles = document.querySelectorAll('article')
-  if (regexName(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true && emptyCart == true ) {
+  if (regexName(firstname, lastname, city) == true && regexAddress(address) == true && regexEmail(email) == true && emptyCart() == true) {
     let user = createUserObject(firstname, lastname, address, city, email)
     let productsId = getDataId(articles)
     let orderInfos = { contact: user, products: productsId }
@@ -290,6 +290,7 @@ function emptyCart() {
     alert("Le panier est vide !")
     return false
   } else {
+    console.log(articles)
     return true
   }
 }
